@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Tambahkan ini di <head> untuk icon tab browser -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Playist Lovi Dan Tyoo 🤍😇</title>
+<style>
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #000000, #02184a, #000000, #02184a);
+  background-size: 300% 300%;
+  color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+  animation: gradientFlow 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+/* Digital Clock */
+.digital-clock {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 12px;
+  border-radius: 8px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Watermark */
+.watermark {
+  position: fixed;
+  top: 60px;
+  left: 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+  /* Container */
+  .app-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px 24px 48px;
+    gap: 32px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    font-weight: 900;
+    font-size: 2rem;
+    letter-spacing: 0.0em;
+    user-select: none;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #4f46e5;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  .header-description {
+  font-size: 0.7rem;    /* Ukuran kecil */
+  /*font-style: italic;   /* Format italic */
+  opacity: 0.2;         /* Opacity 50% */
+  margin-top: 4px;      /* Jarak dari judul */
+  font-weight: normal;
+  margin-bottom: 0;     /* Hilangkan margin bawah default */
+  color: #ffffff;       /* Warna yang sama dengan header */
+  text-align: center;   /* Rata tengah */
+  letter-spacing: 0.0px; /* Sedikit spacing */
+}
+  .fullscreen-btn {
+  position: absolute;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #c3b9d9;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.fullscreen-btn:hover {
+  background: rgba(139, 92, 246, 0.3);
+  transform: scale(1.1);
+}
+
+  /* Main player layout */
+  main {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 32px;
+  }
+
+  /* Playlist panel */
+  .playlist {
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 24px;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.1);
+  }
+  .playlist h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #c7d2fe;
+  }
+  .track-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .track-list li {
+    padding: 10px 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #ddd6fe;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .track-list li:hover,
+  .track-list li.active {
+    background: #4c1d95;
+    color: #f0e9ff;
+  }
+  .track-list li:last-child {
+    margin-bottom: 0;
+  }
+  .track-title {
+    font-weight: 600;
+    flex-grow: 1;
+  }
+  .track-artist {
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: #a5b4fc;
+  }
+
+  /* Player display panel */
+  .player {
+    background: #2c3a62;
+    border-radius: 20px;
+    padding: 32px 40px;
+    box-shadow: 0 12px 36px rgba(107, 33, 168, 0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-art {
+    width: 280px;
+    height: 280px;
+    border-radius: 24px;
+    background-color: #4f46e5;
+    box-shadow: 0 4px 30px rgba(139, 92, 246, 0.25);
+    overflow: hidden;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.7), 
+              0 0 40px rgba(139, 92, 246, 0.5),
+              0 0 60px rgba(139, 92, 246, 0.3);
+     transition: box-shadow 0.3s ease;
+       transform: translateY(0);
+  animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+  .cover-art:hover {
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.9),
+              0 0 60px rgba(139, 92, 246, 0.6),
+              0 0 90px rgba(139, 92, 246, 0.3); }
+  .cover-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+      }
+.cover-art:hover img {
+  transform: scale(1.1); /* Gambar membesar lebih banyak dari container */
+}
+  .track-info {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .track-info .title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #ddd6fe;
+  }
+  .track-info .artist {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #a5b4fc;
+  }
+
+  /* Controls */
+  .controls {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+  button.control-btn {
+    background: transparent;
+    border: none;
+    color: #ddd6fe;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  button.control-btn:focus-visible {
+    outline: 3px solid #8b5cf6;
+    outline-offset: 3px;
+  }
+  button.control-btn:hover {
+    background: rgba(139, 92, 246, 0.2);
+    transform: scale(1.1);
+  }
+  button.control-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Play / Pause icon modification */
+  /* Using SVG from inline icons below */
+
+  /* Progress bar */
+  .progress-container {
+    width: 100%;
+    height: 12px;
+    background: #4b5563;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+  .progress {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #4f46e5);
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+  .time-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #a5b4fc;
+    user-select: none;
+    margin-bottom: 24px;
+  }
+
+  /* Volume control */
+  .volume-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 320px;
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+    cursor: pointer;
+  }
+  input[type="range"]:focus {
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: #6b7280;
+    border-radius: 3px;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    background: #8b5cf6;
+    border-radius: 50%;
+    margin-top: -7px;
+    transition: background-color 0.3s ease;
+  }
+  input[type="range"]:hover::-webkit-slider-thumb {
+    background: #7c3aed;
+  }
+  input[type="range"]::-moz-range-track {
+    height: 6px;
+    background: #6b7280;
+    border-radius: 3px;
+  }
+  input[type="range"]::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    background: #8b5cf6;
+    border-radius: 50%;
+    border: none;
+  }
+
+  /* Volume icon */
+  .volume-icon {
+    font-size: 24px;
+    color: #ddd6fe;
+    cursor: pointer;
+  }
+
+  /* Responsive */
+
+  @media (max-width: 1024px) {
+    main {
+      grid-template-columns: 1fr;
+    }
+    .player {
+      padding: 24px 16px 32px;
+    }
+    .cover-art {
+      width: 240px;
+      height: 240px;
+      margin-bottom: 20px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .app-container {
+      padding: 16px 16px 48px;
+      gap: 24px;
+    }
+    header {
+      font-size: 1.5rem;
+      padding-bottom: 4px;
+    }
+    .playlist {
+      height: 300px;
+      padding: 16px;
+    }
+    .track-list li {
+      padding: 8px 12px;
+      font-size: 0.9rem;
+    }
+    .player {
+      padding: 24px 16px 24px;
+    }
+    .cover-art {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 16px;
+    }
+    .controls {
+      gap: 24px;
+    }
+    .time-info {
+      font-size: 0.75rem;
+      margin-bottom: 12px;
+    }
+    .volume-control {
+      max-width: 240px;
+    }
+  }
+</style>
+<!-- Google Material Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+<body>
+  <div class="app-container" role="main" aria-label="Music player application">
+<header>
+    Playist Kita Nanti Yaa Sayangg 🤍
+  <button id="fullscreen-btn" class="fullscreen-btn" aria-label="Toggle fullscreen">
+    <span class="material-icons">fullscreen</span>
+  </button>
+  <p class="header-description">@grteo_alfndd21 @lovnaa._🥹 ~</p>
+</header>
+    <main>
+      <section class="playlist" aria-label="Playlist">
+        <h2>Playlist</h2>
+        <ul class="track-list" role="list" tabindex="0" aria-live="polite" aria-relevant="additions removals" aria-atomic="true">
+          <!-- Track items inserted by JS -->
+        </ul>
+      </section>
+
+      <section class="player" aria-label="Music player controls">
+        <div class="cover-art" aria-label="Current track cover art">
+          <img src="" alt="" />
+        </div>
+        
+        <div class="track-info" tabindex="0" aria-live="polite">
+          <div class="title"></div>
+          <div class="artist"></div>
+        </div>
+        <div class="progress-container" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Song progress bar" tabindex="0">
+          <div class="progress"></div>
+        </div>
+        <div class="time-info" aria-hidden="true">
+          <span class="current-time">0:00</span>
+          <span class="duration">0:00</span>
+        </div>
+        <div class="controls" role="group" aria-label="Playback controls">
+          <button class="control-btn prev" aria-label="Previous track">
+            <span class="material-icons">skip_previous</span>
+          </button>
+          <button class="control-btn play-pause" aria-label="Play" aria-pressed="false">
+            <span class="material-icons">play_arrow</span>
+          </button>
+          <button class="control-btn next" aria-label="Next track">
+            <span class="material-icons">skip_next</span>
+          </button>
+        </div>
+        <div class="volume-control" role="group" aria-label="Volume control">
+          <span class="volume-icon material-icons" id="volume-icon" tabindex="0" role="button" aria-label="Mute volume">volume_up</span>
+          <input type="range" min="0" max="1" step="0.01" value="0.7" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.7" aria-label="Volume slider" />
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Fullscreen functionality
+const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => {
+      console.error(`Error attempting to enable fullscreen: ${err.message}`);
+    });
+    fullscreenBtn.innerHTML = '<span class="material-icons">fullscreen_exit</span>';
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+      fullscreenBtn.innerHTML = '<span class="material-icons">fullscreen</span>';
+    }
+  }
+}
+
+fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+// Update icon saat fullscreen berubah
+document.addEventListener('fullscreenchange', () => {
+  if (document.fullscreenElement) {
+    fullscreenBtn.innerHTML = '<span class="material-icons">fullscreen_exit</span>';
+  } else {
+    fullscreenBtn.innerHTML = '<span class="material-icons">fullscreen</span>';
+  }
+});
+
+// Keyboard shortcut (F11)
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'F11') {
+    e.preventDefault();
+    toggleFullscreen();
+  }
+});
+    (() => {
+      // Track data
+      const tracks = [
+        {
+          title: 'Sinarengan',
+          artist: 'LovTyo',
+          audioUrl: 'sinarengan.mp3',
+          coverUrl: 'cover_sinarengan.jpg',
+          coverAlt: 'Album cover with purple abstract shapes and acoustic guitar silhouette'
+        },
+        {
+          title: 'Kini Ku Memenmukanmu~',
+          artist: 'LovTyo',
+          audioUrl: 'KiniKuMenemukanmu.mp3',
+          coverUrl: 'KiniKuMenemukanmu.jpg',
+          coverAlt: 'Album cover featuring bright yellow sunburst abstract art'
+        },
+        {
+          title: 'Saat Bahagia',
+          artist: 'LovTyo',
+          audioUrl: 'saatBahagiaKu.mp3',
+          coverUrl: 'SaatBahagia.jpg',
+          coverAlt: 'Album cover featuring bright yellow sunburst abstract art'
+        }
+      ];
+
+      // DOM selectors
+      const trackListEl = document.querySelector('.track-list');
+      const coverImgEl = document.querySelector('.cover-art img');
+      const titleEl = document.querySelector('.track-info .title');
+      const artistEl = document.querySelector('.track-info .artist');
+      const playPauseBtn = document.querySelector('.play-pause');
+      const playPauseIcon = playPauseBtn.querySelector('.material-icons');
+      const prevBtn = document.querySelector('.prev');
+      const nextBtn = document.querySelector('.next');
+      const progressContainer = document.querySelector('.progress-container');
+      const progressBar = document.querySelector('.progress');
+      const currentTimeEl = document.querySelector('.current-time');
+      const durationEl = document.querySelector('.duration');
+      const volumeRange = document.querySelector('input[type="range"]');
+      const volumeIcon = document.getElementById('volume-icon');
+
+      // Audio setup
+      const audio = new Audio();
+      audio.preload = 'metadata';
+      let currentTrackIndex = 0;
+      let isPlaying = false;
+      let isMuted = false;
+
+      // Initialize playlist UI
+      function renderPlaylist() {
+        trackListEl.innerHTML = '';
+        tracks.forEach((track, i) => {
+          const li = document.createElement('li');
+          li.setAttribute('role', 'option');
+          li.id = `track-${i}`;
+          li.tabIndex = 0;
+
+          li.classList.toggle('active', i === currentTrackIndex);
+
+          const titleSpan = document.createElement('span');
+          titleSpan.className = 'track-title';
+          titleSpan.textContent = track.title;
+
+          const artistSpan = document.createElement('span');
+          artistSpan.className = 'track-artist';
+          artistSpan.textContent = track.artist;
+
+          li.appendChild(titleSpan);
+          li.appendChild(artistSpan);
+
+          li.addEventListener('click', () => {
+            if (currentTrackIndex !== i) {
+              changeTrack(i);
+              playAudio();
+            }
+          });
+          li.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              if (currentTrackIndex !== i) {
+                changeTrack(i);
+                playAudio();
+              }
+            }
+          });
+
+          trackListEl.appendChild(li);
+        });
+      }
+
+      // Update player display
+      function updatePlayerDisplay() {
+        const track = tracks[currentTrackIndex];
+        coverImgEl.src = track.coverUrl;
+        coverImgEl.alt = track.coverAlt;
+        titleEl.textContent = track.title;
+        artistEl.textContent = track.artist;
+
+        // Update aria-pressed for play/pause
+        playPauseBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+
+        // Highlight current track in playlist
+        Array.from(trackListEl.children).forEach((li, idx) => {
+          li.classList.toggle('active', idx === currentTrackIndex);
+        });
+      }
+
+      // Load track into audio element
+      function loadTrack(index) {
+        currentTrackIndex = index;
+        audio.src = tracks[index].audioUrl;
+        audio.load();
+        updatePlayerDisplay();
+      }
+
+      // Format time in mm:ss
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      }
+
+      // Play audio
+      function playAudio() {
+        audio.play();
+      }
+
+      // Pause audio
+      function pauseAudio() {
+        audio.pause();
+      }
+
+      // Toggle play/pause
+      function togglePlayPause() {
+        if (isPlaying) {
+          pauseAudio();
+        } else {
+          playAudio();
+        }
+      }
+
+      // Set progress bar width
+      function updateProgress() {
+        if (audio.duration) {
+          const progressPercent = (audio.currentTime / audio.duration) * 100;
+          progressBar.style.width = `${progressPercent}%`;
+          currentTimeEl.textContent = formatTime(audio.currentTime);
+          durationEl.textContent = formatTime(audio.duration);
+          progressContainer.setAttribute('aria-valuenow', progressPercent.toFixed(0));
+        }
+      }
+
+      // Set progress on user interaction (click or keyboard)
+      function setProgress(e) {
+        const rect = progressContainer.getBoundingClientRect();
+        let clickX = e.clientX;
+        if (e.type === 'keydown') {
+          // keyboard left/right arrows increment/decrement current time by 5 seconds
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+            audio.currentTime = Math.max(audio.currentTime - 5, 0);
+          } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+            audio.currentTime = Math.min(audio.currentTime + 5, audio.duration);
+          }
+          return;
+        }
+        if (clickX < rect.left) clickX = rect.left;
+        if (clickX > rect.right) clickX = rect.right;
+        const width = rect.right - rect.left;
+        const clickPercent = (clickX - rect.left) / width;
+        audio.currentTime = clickPercent * audio.duration;
+      }
+
+      // Change track index and load it
+      function changeTrack(index) {
+        if (index < 0) {
+          index = tracks.length - 1;
+        } else if (index >= tracks.length) {
+          index = 0;
+        }
+        loadTrack(index);
+      }
+
+      // Next track
+      function nextTrack() {
+        changeTrack(currentTrackIndex + 1);
+        if (isPlaying) {
+          playAudio();
+        }
+      }
+
+      // Previous track
+      function prevTrack() {
+        changeTrack(currentTrackIndex - 1);
+        if (isPlaying) {
+          playAudio();
+        }
+      }
+
+      // Volume control
+      function setVolume(value) {
+        audio.volume = value;
+        updateVolumeIcon(value);
+        isMuted = value === 0;
+      }
+
+      function toggleMute() {
+        if (isMuted) {
+          setVolume(volumeRange.value = lastVolume || 0.7);
+        } else {
+          lastVolume = audio.volume;
+          setVolume(volumeRange.value = 0);
+        }
+      }
+
+      function updateVolumeIcon(volume) {
+        if (volume == 0) {
+          volumeIcon.textContent = 'volume_off';
+          volumeIcon.setAttribute('aria-label', 'Unmute volume');
+        } else if (volume < 0.5) {
+          volumeIcon.textContent = 'volume_down';
+          volumeIcon.setAttribute('aria-label', 'Mute volume');
+        } else {
+          volumeIcon.textContent = 'volume_up';
+          volumeIcon.setAttribute('aria-label', 'Mute volume');
+        }
+      }
+
+      // Event listeners register
+      function registerEvents() {
+        playPauseBtn.addEventListener('click', () => {
+          togglePlayPause();
+        });
+
+        prevBtn.addEventListener('click', () => {
+          prevTrack();
+        });
+
+        nextBtn.addEventListener('click', () => {
+          nextTrack();
+        });
+
+        audio.addEventListener('play', () => {
+          isPlaying = true;
+          playPauseIcon.textContent = 'pause';
+          playPauseBtn.setAttribute('aria-label', 'Pause');
+        });
+
+        audio.addEventListener('pause', () => {
+          isPlaying = false;
+          playPauseIcon.textContent = 'play_arrow';
+          playPauseBtn.setAttribute('aria-label', 'Play');
+        });
+
+        audio.addEventListener('ended', () => {
+          nextTrack();
+        });
+
+        audio.addEventListener('timeupdate', updateProgress);
+
+        progressContainer.addEventListener('click', setProgress);
+        progressContainer.addEventListener('keydown', e => {
+          if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+            e.preventDefault();
+            setProgress(e);
+          }
+        });
+        progressContainer.tabIndex = 0;
+
+        volumeRange.addEventListener('input', (e) => {
+          setVolume(e.target.value);
+        });
+
+        volumeIcon.addEventListener('click', () => {
+          toggleMute();
+        });
+        volumeIcon.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleMute();
+          }
+        });
+
+        // Keyboard shortcuts for global play/pause space
+        window.addEventListener('keydown', (e) => {
+          if (e.target.tagName !== 'INPUT' && e.key === ' ') {
+            e.preventDefault();
+            togglePlayPause();
+          }
+        });
+      }
+      function updateClock() {
+       const now = new Date();
+       let hours = now.getHours();
+         const ampm = hours >= 12 ? 'PM' : 'AM';
+          hours = hours % 12;
+           hours = hours ? hours : 12; // the hour '0' should be '12'
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+             const seconds = now.getSeconds().toString().padStart(2, '0');
+                         document.getElementById('digital-clock').textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
+                  }
+      // Initialize app
+      function init() {
+        renderPlaylist();
+        loadTrack(currentTrackIndex);
+        setVolume(volumeRange.value);
+        registerEvents();
+      }
+
+      let lastVolume = 1.0 ;
+
+      init();
+            setInterval(updateClock, 1000);
+      updateClock(); // Initial call
+    })();
+  </script>
+<div class="digital-clock" id="digital-clock"></div>
+<div class="watermark">@AlfandoXeon</div>
+</body>
+</html>
