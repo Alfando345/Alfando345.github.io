@@ -265,29 +265,29 @@
         </div>
         
         <div class="buttons-grid">
-            <button class="clear" data-action="clear">AC</button>
-            <button class="delete" data-action="delete">DEL</button>
-            <button data-action="percentage">%</button>
-            <button class="operator" data-action="divide">/</button>
+            <button class="clear" id="clear">AC</button>
+            <button class="delete" id="delete">DEL</button>
+            <button id="percentage">%</button>
+            <button class="operator" id="divide">/</button>
             
-            <button data-action="number">7</button>
-            <button data-action="number">8</button>
-            <button data-action="number">9</button>
-            <button class="operator" data-action="multiply">×</button>
+            <button class="number" id="seven">7</button>
+            <button class="number" id="eight">8</button>
+            <button class="number" id="nine">9</button>
+            <button class="operator" id="multiply">×</button>
             
-            <button data-action="number">4</button>
-            <button data-action="number">5</button>
-            <button data-action="number">6</button>
-            <button class="operator" data-action="subtract">-</button>
+            <button class="number" id="four">4</button>
+            <button class="number" id="five">5</button>
+            <button class="number" id="six">6</button>
+            <button class="operator" id="subtract">-</button>
             
-            <button data-action="number">1</button>
-            <button data-action="number">2</button>
-            <button data-action="number">3</button>
-            <button class="operator" data-action="add">+</button>
+            <button class="number" id="one">1</button>
+            <button class="number" id="two">2</button>
+            <button class="number" id="three">3</button>
+            <button class="operator" id="add">+</button>
             
-            <button data-action="number">0</button>
-            <button data-action="decimal">.</button>
-            <button class="equals" data-action="equals">=</button>
+            <button class="number" id="zero">0</button>
+            <button id="decimal">.</button>
+            <button class="equals" id="equals">=</button>
         </div>
     </div>
     
@@ -305,6 +305,13 @@
             // DOM Elements
             const currentOperandElement = document.getElementById('currentOperand');
             const previousOperandElement = document.getElementById('previousOperand');
+            const numberButtons = document.querySelectorAll('.number');
+            const operatorButtons = document.querySelectorAll('.operator');
+            const equalsButton = document.getElementById('equals');
+            const clearButton = document.getElementById('clear');
+            const deleteButton = document.getElementById('delete');
+            const decimalButton = document.getElementById('decimal');
+            const percentageButton = document.getElementById('percentage');
             const historyPanel = document.getElementById('historyPanel');
             const historyBtn = document.getElementById('historyBtn');
             const closeHistory = document.getElementById('closeHistory');
@@ -339,56 +346,84 @@
                     setTimeout(() => {
                         ripple.remove();
                     }, 600);
-                    
-                    // Button actions
-                    const action = this.getAttribute('data-action');
-                    
-                    if (!action) return;
-                    
-                    switch(action) {
-                        case 'number':
-                            appendNumber(this.textContent);
-                            break;
-                        case 'decimal':
-                            appendDecimal();
-                            break;
-                        case 'operator':
-                            chooseOperation(this.textContent);
-                            break;
-                        case 'equals':
-                            compute();
-                            break;
-                        case 'clear':
-                            clear();
-                            break;
-                        case 'delete':
-                            deleteNumber();
-                            break;
-                        case 'percentage':
-                            percentage();
-                            break;
-                    }
-                    
+                });
+            });
+            
+            // Number buttons
+            numberButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    appendNumber(button.textContent);
                     updateDisplay();
                 });
             });
             
+            // Operator buttons
+            operatorButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    chooseOperation(button.textContent);
+                    updateDisplay();
+                });
+            });
+            
+            // Other buttons
+            equalsButton.addEventListener('click', () => {
+                compute();
+                updateDisplay();
+            });
+            
+            clearButton.addEventListener('click', () => {
+                clear();
+                updateDisplay();
+            });
+            
+            deleteButton.addEventListener('click', () => {
+                deleteNumber();
+                updateDisplay();
+            });
+            
+            decimalButton.addEventListener('click', () => {
+                appendDecimal();
+                updateDisplay();
+            });
+            
+            percentageButton.addEventListener('click', () => {
+                percentage();
+                updateDisplay();
+            });
+            
             // Keyboard support
             document.addEventListener('keydown', (e) => {
-                if (e.key >= 0 && e.key <= 9) appendNumber(e.key);
-                if (e.key === '.') appendDecimal();
-                if (e.key === '=' || e.key === 'Enter') compute();
-                if (e.key === 'Backspace') deleteNumber();
-                if (e.key === 'Escape') clear();
-                if (e.key === '%') percentage();
+                if (e.key >= 0 && e.key <= 9) {
+                    appendNumber(e.key);
+                    updateDisplay();
+                }
+                if (e.key === '.') {
+                    appendDecimal();
+                    updateDisplay();
+                }
+                if (e.key === '=' || e.key === 'Enter') {
+                    compute();
+                    updateDisplay();
+                }
+                if (e.key === 'Backspace') {
+                    deleteNumber();
+                    updateDisplay();
+                }
+                if (e.key === 'Escape') {
+                    clear();
+                    updateDisplay();
+                }
+                if (e.key === '%') {
+                    percentage();
+                    updateDisplay();
+                }
                 if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
                     chooseOperation(
                         e.key === '*' ? '×' : 
                         e.key === '/' ? '÷' : e.key
                     );
+                    updateDisplay();
                 }
-                
-                updateDisplay();
             });
             
             // History panel
@@ -442,6 +477,7 @@
                 operation = op;
                 previousOperand = currentOperand;
                 currentOperand = '';
+                resetScreen = true;
             }
             
             function compute() {
@@ -449,7 +485,7 @@
                 const prev = parseFloat(previousOperand);
                 const current = parseFloat(currentOperand);
                 
-                if (isNaN(prev) return;
+                if (isNaN(prev) || isNaN(current)) return;
                 
                 switch (operation) {
                     case '+':
