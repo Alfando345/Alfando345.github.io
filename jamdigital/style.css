@@ -1,0 +1,495 @@
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&display=swap');
+        
+        :root {
+            --glow-color: rgba(255, 255, 255, 0.8);
+        }
+        .credit-menu {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+.greeting-container {
+    font-size: 1.8rem; /* Lebih kecil dari jam */
+    font-weight: 800;
+    margin-top: 0rem;
+    text-align: center;
+    opacity: 0.9;
+    text-shadow: 
+        0 0 5px var(--glow-color),
+        0 0 10px var(--glow-color);
+    height: 2rem;
+    transition: all 0.3s ease;
+}
+.music-status {
+    position: fixed;
+    right: 10px;
+    bottom: 30px; /* Di atas watermark */
+    font-size: 0.7rem;
+    opacity: 0.7;
+    z-index: 100;
+    background: rgba(0,0,0,0.3);
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+/* Tombol toggle hujan */
+.rain-toggle {
+    position: fixed;
+    bottom: 70px; /* Sesuaikan jarak dari bawah */
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: white;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rain-toggle:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Canvas untuk efek hujan */
+#rain-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Agar tidak mengganggu interaksi */
+    z-index: -1; /* Di belakang konten utama */
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+#rain-canvas.active {
+    opacity: 0.6; /* Sesuaikan opacity efek hujan */
+}
+/* Jika watermark sudah ada, sesuaikan posisinya */
+.watermark {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    font-size: 0.7rem;
+    opacity: 0.7;
+    z-index: 100;
+    background: rgba(0,0,0,0.3);
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+edit-menu .credit-name {
+    font-weight: bold;
+    margin-top: 5px;
+    color: white;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            background: radial-gradient(circle at center, #000000 0%, #2d3436 70%, #4b4b4b 100%);
+            color: white;
+            overflow: hidden;
+            user-select: none;
+            padding-top: 12vh;
+            position: relative;
+                background: linear-gradient(90deg, 
+              #000000, 
+               #400089, 
+              #1f0035, 
+              #000000, 
+               #bdbdbd);
+        background-size: 400% 100%;
+             animation: gradientAnimation 35s ease infinite;
+        }
+        @keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+        .date-container {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-align: center;
+            opacity: 0.9;
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+
+        .time-container {
+            font-size: 6rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-top: 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            text-shadow: 
+                0 0 10px var(--glow-color),
+                0 0 20px var(--glow-color),
+                0 0 30px var(--glow-color),
+                0 0 40px var(--glow-color),
+                0 2px 5px rgba(0, 0, 0, 0.5),
+                inset 0 1px 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .time-container:hover {
+            transform: scale(1.05);
+        }
+
+        .colon {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Fullscreen Button */
+        .fullscreen-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.5rem;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            padding: 5px;
+            z-index: 10;
+        }
+
+        .fullscreen-btn:hover {
+            opacity: 1;
+        }
+
+        :fullscreen .fullscreen-btn {
+            display: none;
+        }
+
+.menu-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    z-index: 10;
+    padding: 0;
+}
+
+.menu-btn:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.menu-btn svg {
+    width: 20px;
+    height: 20px;
+}
+        /* Menu Panel */
+        .menu-panel {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            width: 250px;
+            transform: translateX(-120%);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(5px);
+            z-index: 9;
+        }
+
+        .menu-panel.active {
+            transform: translateX(0);
+        }
+
+        .menu-panel h3 {
+            margin-top: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 8px;
+        }
+
+.stopwatch-display {
+    font-size: 1.8rem;
+    text-align: center;
+    margin: 10px 0;
+    font-family: monospace; /* Agar angka tetap sejajar */
+    letter-spacing: 1px;
+}
+/* Splash Screen Styles */
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #000000, #400089, #1f0035);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.splash-screen.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.splash-content {
+    text-align: center;
+}
+
+.loader {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid white;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.splash-screen p {
+    color: white;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+.stopwatch-display::after {
+    content: "ms";
+    font-size: 1rem;
+    opacity: 0.7;
+    margin-left: 5px;
+}
+        .stopwatch-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .stopwatch-controls button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .stopwatch-controls button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .stopwatch-history {
+            max-height: 150px;
+            overflow-y: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 10px;
+        }
+
+        .stopwatch-history div {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .instagram-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Weather Display */
+   .weather-container {
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+    z-index: 100;
+    max-width: 150px;
+    font-size: 0.8rem;
+}
+        .weather-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .weather-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .weather-temp {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .weather-desc {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Watermark */
+.watermark {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    font-size: 0.7rem;
+    opacity: 0.7;
+    z-index: 100;
+    background: rgba(0,0,0,0.3);
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+
+        /* Audio Control */
+        .audio-control {
+            position: absolute;
+            bottom: 20px;
+            right: 80px;
+            opacity: 0.7;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .audio-control:hover {
+            opacity: 1;
+        }
+@media (max-width: 600px), (max-height: 400px) {
+    .watermark,
+    .weather-container,
+    .music-status {
+        transform: scale(0.8);
+        transform-origin: bottom right;
+    }
+    
+    .weather-container {
+        left: 5px;
+        bottom: 5px;
+    }
+}
+.notification {
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: rgba(0, 150, 255, 0.2);
+    border-radius: 20px;
+    display: inline-block;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border: 1px solid rgba(0, 150, 255, 0.5);
+}
+
+.notification.active {
+    opacity: 0.5;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.floating-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    overflow: hidden;
+    opacity: 0.1; /* 30% opacity */
+
+}
+
+#bg-image {
+    position: absolute;
+    width: 120%; /* Slightly larger for movement */
+    height: 120%;
+    object-fit: cover;
+    animation: float 10s infinite ease-in-out;
+    background-size: 150%;
+    filter: contrast(5);
+}
+
+/* Floating animation */
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(-0.3%, 0%) rotate(-1deg);
+    }
+    50% {
+        transform: translate(-0.2%, 0%) rotate(1deg);
+    }
+    75% {
+        transform: translate(0.1%, 0%) rotate(-1deg);
+    }
+}
+
+/* Dark overlay for better text contrast */
+.floating-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
