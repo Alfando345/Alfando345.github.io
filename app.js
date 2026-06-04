@@ -30,6 +30,8 @@ function renderAll() {
     renderHero();
     renderAbout();
     renderSkills();
+    renderYoutube();
+    renderPortfolio();
     renderContact();
     startTypingEffect();
 
@@ -162,6 +164,47 @@ function renderSkills() {
 }
 
 // --- Contact Section ---
+function renderYoutube() {
+    const youtubeLink = configData.youtube_channel;
+    const youtubeEmbed = document.getElementById('youtube-embed');
+    const youtubeButton = document.getElementById('youtube-link');
+
+    if (!youtubeEmbed || !youtubeLink) return;
+
+    const rawHandle = youtubeLink.split('/').pop().split('?')[0];
+    const channelHandle = rawHandle.startsWith('@') ? rawHandle.slice(1) : rawHandle;
+    const embedUrl = `https://www.youtube.com/embed?listType=user_uploads&list=${encodeURIComponent(channelHandle)}`;
+
+    youtubeEmbed.innerHTML = `
+        <div class="youtube-frame-wrapper">
+            <iframe src="${embedUrl}" title="YouTube Channel ${channelHandle}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+    `;
+
+    if (youtubeButton) {
+        youtubeButton.href = youtubeLink;
+    }
+}
+
+function renderPortfolio() {
+    const portfolio = configData.portfolio_site;
+    const portfolioTitle = document.getElementById('portfolio-title');
+    const portfolioDescription = document.getElementById('portfolio-description');
+    const portfolioButton = document.getElementById('portfolio-link');
+
+    if (!portfolio || !portfolioButton) return;
+
+    if (portfolioTitle) {
+        portfolioTitle.textContent = portfolio.title || 'Portofolio Editing & Konten Kreator';
+    }
+    if (portfolioDescription) {
+        portfolioDescription.textContent = portfolio.description || 'Kunjungi portofolio saya untuk melihat karya editing dan konten kreator Mobile Legends.';
+    }
+
+    portfolioButton.textContent = portfolio.button_text || 'Kunjungi Portofolio';
+    portfolioButton.href = portfolio.url;
+}
+
 function renderContact() {
     const profile = configData.profile;
     const socialLinks = configData.social_links;

@@ -697,6 +697,83 @@ section {
     gap: 1.5rem;
 }
 
+.youtube {
+    background: var(--bg-darker);
+}
+
+.youtube-card {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 2rem;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2rem;
+}
+
+.youtube-card:hover {
+    border-color: var(--border-glow);
+    box-shadow: 0 0 30px var(--border-glow);
+}
+
+.youtube-info h3,
+.portfolio-info h3 {
+    font-family: var(--font-mono);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin-bottom: 1rem;
+}
+
+.portfolio {
+    background: var(--bg-darker);
+}
+
+.portfolio-card {
+    display: grid;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2rem;
+}
+
+.portfolio-info p,
+.youtube-info p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+.youtube-embed {
+    display: block;
+    width: 100%;
+}
+
+.youtube-frame-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #000;
+}
+
+.youtube-frame-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+@media (max-width: 768px) {
+    .youtube-card {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+    }
+}
+
 .terminal-section {
     padding: 6rem 2rem;
 }
